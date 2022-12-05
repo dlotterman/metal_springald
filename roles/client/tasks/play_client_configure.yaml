@@ -1,0 +1,5 @@
+---
+- include_tasks: client_metal_dir_create.yaml
+- include_tasks: client_configure_vlan_interface.yaml
+- include_tasks: client_update_os.yaml
+- include_tasks: client_install_packages.yaml

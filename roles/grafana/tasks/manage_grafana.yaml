@@ -1,0 +1,77 @@
+---
+- name: grafana_add_user
+  become: yes
+  become_method: sudo
+  user: 
+    name: grafana
+    shell: /bin/false
+    create_home: false
+    system: true
+
+- name: springald_metal_dir_create_grafana
+  become: true
+  become_method: sudo
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+    recurse: yes
+    owner: grafana
+  loop:
+    - /metal/grafana
+    - /metal/grafana/bin
+    - /metal/grafana/config
+    - /metal/grafana/run
+    - /metal/grafana/data
+    
+- name: grafana_install_binary
+  become: yes
+  become_method: sudo
+  unarchive:
+    src: http://ipxe.dlott.casa/util/grafana-9.3.1.linux-amd64.tar.gz
+    dest: /metal/grafana/bin/
+    mode: 0755
+    owner: grafana
+    group: grafana
+    remote_src: true
+    creates: /metal/grafana/bin/grafana-9.3.1/VERSION 
+
+# Figure out this Grafana path / requireing bin / public stuff.   
+- name: dir_harness_bin_grafana_data
+  become: yes
+  become_method: sudo
+  file:
+    path: /metal/grafana/bin/grafana-9.3.1/
+    state: directory
+    mode: 0755
+    owner: grafana
+    group: grafana
+    recurse: true
+    
+- name: grafana_template_config
+  become: yes
+  become_method: sudo
+  template:
+    src: templates/grafana_conf.ini.j2
+    dest: /metal/grafana/config/grafana_conf.ini
+    owner: grafana
+    
+    
+- name: grafana_template_systemd_unit
+  become: yes
+  become_method: sudo
+  template:
+    src: templates/grafana_systemd.service.j2
+    dest: "/etc/systemd/system/grafana.service"
+    owner: root
+    group: root
+  notify: grafana_restart
+
+- name: grafana_systemd_enable
+  become: yes
+  become_method: sudo
+  systemd:
+    name: grafana
+    state: started
+    daemon_reload: yes
+    enabled: yes

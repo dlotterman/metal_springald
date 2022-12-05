@@ -1,0 +1,11 @@
+---
+- name: metal_get_instance_details
+  uri:
+    url: "https://api.equinix.com/metal/v1/devices/{{ hostvars[item].id }}"
+    method: GET
+    headers:
+      X-Auth-Token: "{{ metal_api_token }}"
+    return_content: true
+    status_code: 200
+  register: metal_get_instance_details
+  loop: "{{ query('inventory_hostnames', 'tag_metal_springald') }}"

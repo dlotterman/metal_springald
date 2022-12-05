@@ -1,0 +1,33 @@
+---
+- name: client_etc_modules_load_vlan_conf
+  become: true
+  become_method: sudo
+  ansible.builtin.lineinfile:
+    path: /etc/modules-load.d/vlan.conf
+    line: 8021q
+    create: yes
+  
+- name: client_template_networking_script
+  become: true
+  become_method: sudo
+  template:
+    src: roles/client/templates/client_swap_networks.sh.j2
+    dest: /metal/scripts/client_swap_networks.sh
+    mode: '0644'
+
+- name: client_execute_networking_script
+  become: true
+  become_method: sudo
+  ansible.builtin.command: "bash /metal/scripts/client_swap_networks.sh"
+  args:
+    creates: /dev/shm/metal_lock/network_lock_v1.lock
+  register: client_configure_networking_output
+  ignore_errors: true
+
+- name: client_configure_networking_lock_file
+  become: yes
+  become_method: sudo
+  file: 
+    path: /dev/shm/metal_lock/network_lock_v1.lock
+    state: touch
+  when: client_configure_networking_output.changed

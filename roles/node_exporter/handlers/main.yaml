@@ -1,0 +1,21 @@
+---
+# handlers:
+  # - name: node_exporter_restart
+    # systemd:
+      # name: node_exporter
+      # state: restarted
+  # - name: node_exporter_reload
+    # systemd:
+      # name: node_exporter
+      # daemon_reload: true
+      
+      
+- name: node_exporter_restart
+  systemd:
+    name: node_exporter
+    state: restarted
+
+- name: node_exporter_reload
+  systemd:
+    name: node_exporter
+    daemon_reload: true

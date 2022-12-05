@@ -1,0 +1,5 @@
+---
+- name: client_execute_iperf
+  become: true
+  become_method: sudo
+  ansible.builtin.command: 'iperf3 -c "{{ springald_ips["metal_router_vip1"] }}" -P 4 -t 600 -p "{{ iperf_port_mapping[inventory_hostname] }}"'

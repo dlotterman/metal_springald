@@ -1,0 +1,14 @@
+---
+- name: metal_provision_metal_data_vlans
+  uri:
+    url: "https://api.equinix.com/metal/v1/projects/{{ metal_project_id }}/virtual-networks"
+    method: POST
+    headers:
+      X-Auth-Token: "{{ metal_api_token }}"
+    body_format: json
+    body:
+      metro: "{{ metal_metro }}"
+      vxlan: "{{ item }}"
+      description: "metal_spingald_vlan"
+    status_code: [201, 422]
+  loop: "{{ metal_data_vlans }}"

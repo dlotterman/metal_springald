@@ -1,0 +1,55 @@
+- name: node_exporter_add_user
+  become: yes
+  become_method: sudo
+  user: 
+    name: node_exporter
+    shell: /bin/false
+    create_home: false
+    system: true
+
+- name: springald_metal_dir_create_node_exporter
+  become: true
+  become_method: sudo
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+    recurse: yes
+  loop:
+    - /metal/  
+    - /metal/node_exporter
+    - /metal/node_exporter/bin
+    - /metal/node_exporter/config
+    - /metal/node_exporter/collectors
+    - /metal/node_exporter/data
+
+- name: node_exporter_install_binary
+  become: yes
+  become_method: sudo
+  unarchive:
+    src: http://ipxe.dlott.casa/util/node_exporter-1.5.0.linux-amd64.tar.gz
+    dest: /metal/node_exporter/bin/
+    mode: 0755
+    remote_src: true
+    owner: node_exporter
+    group: node_exporter
+    creates: /metal/node_exporter/bin/node_exporter-1.5.0.linux-amd64/node_exporter
+
+- name: node_exporter_template_systemd_unit
+  become: yes
+  become_method: sudo
+  template:
+    src: templates/node_exporter_systemd.service.j2
+    dest: "/etc/systemd/system/node_exporter.service"
+    owner: root
+    group: root
+  notify: node_exporter_restart
+
+- name: node_exporter_systemd_enable
+  become: yes
+  become_method: sudo
+  systemd:
+    name: node_exporter
+    state: started
+    daemon_reload: yes
+    enabled: yes

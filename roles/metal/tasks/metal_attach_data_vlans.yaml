@@ -1,0 +1,19 @@
+---
+- meta: refresh_inventory
+- name: metal_attach_data_vlans
+  uri:
+    url: https://api.equinix.com/metal/v1/ports/{{ item.0 | json_query(query_string) | first }}/assign
+    method: POST
+    headers:
+      X-Auth-Token: "{{ metal_api_token }}"
+    body_format: json
+    body:
+      vnid: "{{ item.1 }}"
+    status_code: [200, 422]
+    timeout: 120
+  no_log: true
+  loop: "{{ metal_get_instance_details.results |  map(attribute='content') | map('from_json') | product(metal_data_vlans) }}"
+  vars:
+    query_string: 'network_ports[?name==''bond0''].id'
+  loop_control:
+    pause: 2

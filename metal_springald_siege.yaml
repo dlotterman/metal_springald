@@ -1,0 +1,14 @@
+---
+- name: client_siege
+  hosts: tag_metal_client
+  gather_facts: false
+  strategy: free
+  vars:
+    - ansible_python_interpreter: auto_silent
+  tasks:
+    - meta: refresh_inventory
+    
+    - name: play_client_siege
+      include_role:
+        name: siege
+        tasks_from: play_siege.yaml

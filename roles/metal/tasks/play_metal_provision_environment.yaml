@@ -1,0 +1,5 @@
+---
+- include_tasks: metal_provision_metal_data_vlans.yaml
+- include_tasks: metal_get_or_provision_instances.yaml
+- include_tasks: metal_get_instance_details.yaml
+- include_tasks: metal_attach_data_vlans.yaml

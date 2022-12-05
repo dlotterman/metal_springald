@@ -1,0 +1,21 @@
+- name: metal_provision_clients
+  equinix.metal.device:
+    project_id: "{{ metal_project_id }}"
+    hostnames: "metal-client%02d.{{ metal_domain }}"
+    tags: metal_client,metal_domain,metal_springald
+    operating_system: ubuntu_22_04
+    plan: "{{ metal_client_config }}"
+    facility: "{{ metal_facility }}"
+    state: present
+    wait_for_public_IPv: 4
+    count: "{{ metal_num_clients }}"
+  register: metal_provision_clients_output  
+
+- name: metal_provision_clients_output_wait_for_ssh
+  wait_for:
+    delay: 1
+    host: "{{ item.public_ipv4 }}"
+    port: 22
+    state: started
+    timeout: 500
+  with_items: "{{ metal_provision_clients_output.devices }}"  

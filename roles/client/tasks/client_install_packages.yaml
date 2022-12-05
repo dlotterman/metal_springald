@@ -1,0 +1,25 @@
+---
+- name: client_install_system_packages
+  become: yes
+  become_method: sudo
+  ansible.builtin.package:
+    name:
+      - fail2ban
+      - ntpdate
+      - strace
+      - xfsprogs
+      - smartmontools
+      - moreutils
+      - screen          
+      - tmux
+      - ufw
+      - iperf3
+    state: latest
+
+- name: client_install_system_packages
+  become: yes
+  become_method: sudo
+  ansible.builtin.package:
+    name:
+      - nano
+    state: absent 

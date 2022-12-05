@@ -1,0 +1,31 @@
+---
+metal_data_vlans:
+  - 2345
+metal_api_token: "{{ lookup('env', 'METAL_API_TOKEN') }}"
+metal_domain: "da.dlott.casa"
+metal_project_id: "{{ lookup('env', 'METAL_PROJ_ID') }}"
+metal_facility: da11
+metal_metro: da
+
+metal_router_config: n3.xlarge.x86
+metal_client_config: m3.small.x86
+metal_num_routers: 0
+metal_num_clients: 4
+
+springald_ips: {
+metal_router_vip1:  '172.22.22.1',
+metal-router01.da.dlott.casa: '172.16.16.10',
+metal-router02.da.dlott.casa: '172.16.16.11',
+metal-client01.da.dlott.casa: '172.16.16.21',
+metal-client02.da.dlott.casa: '172.16.16.22',
+metal-client03.da.dlott.casa: '172.16.16.23',
+metal-client04.da.dlott.casa: '172.16.16.24' }
+
+springald_netmask: '255.255.255.0'
+
+iperf_port_mapping: {
+metal-client01.da.dlott.casa: '5221',
+metal-client02.da.dlott.casa: '5222',
+metal-client03.da.dlott.casa: '5223',
+metal-client04.da.dlott.casa: '5224'
+}

@@ -1,0 +1,62 @@
+---
+- name: prometheus_add_user
+  become: yes
+  become_method: sudo
+  user: 
+    name: prometheus
+    shell: /bin/false
+    create_home: false
+    system: true
+
+- name: springald_metal_dir_create
+  become: true
+  become_method: sudo
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+    recurse: yes
+    owner: prometheus
+  loop:
+    - /metal/prometheus
+    - /metal/prometheus/bin
+    - /metal/prometheus/config
+    - /metal/prometheus/rules
+    - /metal/prometheus/data
+
+- name: prometheus_install_binary
+  become: yes
+  become_method: sudo
+  unarchive:
+    src: http://ipxe.dlott.casa/util/prometheus-2.40.5.linux-amd64.tar.gz
+    dest: /metal/prometheus/bin/
+    mode: 0755
+    remote_src: true
+    creates: /metal/prometheus/bin/prometheus-2.40.5.linux-amd64/prometheus
+    
+- name: prometheus_template_config
+  become: yes
+  become_method: sudo
+  template:
+    src: templates/prometheus.yaml.j2
+    dest: /metal/prometheus/config/prometheus.yaml
+  notify: prometheus_restart
+    
+- name: prometheus_template_systemd_unit_file
+  become: yes
+  become_method: sudo
+  template:
+    src: templates/prometheus_systemd.service.j2
+    dest: /etc/systemd/system/prometheus.service
+    owner: root
+    group: root
+  notify: prometheus_restart
+
+- name: prometheus_systemd_enable
+  become: yes
+  become_method: sudo
+  systemd:
+    name: prometheus
+    state: started
+    daemon_reload: yes
+    enabled: yes

@@ -1,0 +1,68 @@
+---
+- name: metal_provision_environment
+  hosts: localhost
+  gather_facts: false
+  vars:
+    - ansible_python_interpreter: "{{ ansible_playbook_python }}"
+
+  tasks:
+    - name: metal_provision_environment
+      include_role:
+        name: metal
+        tasks_from: play_metal_provision_environment.yaml
+
+- name: client_configure
+  hosts: tag_metal_client
+  gather_facts: false
+  strategy: free
+  vars:
+    - ansible_python_interpreter: auto_silent
+  tasks:
+    - meta: refresh_inventory
+    
+    - name: play_client_configure
+      include_role:
+        name: client
+        tasks_from: play_client_configure.yaml
+
+- name: springald_configure_node_exporter
+  hosts: tag_metal_springald
+  gather_facts: false
+  strategy: free
+  vars:
+    - ansible_python_interpreter: auto_silent
+  tasks:
+    - meta: refresh_inventory
+    
+    - name: play_manage_node_exporter
+      include_role:
+        name: node_exporter
+        tasks_from: play_manage_node_exporter.yaml
+
+- name: springald_configure_prometheus
+  hosts: metal-client01.da.dlott.casa
+  gather_facts: false
+  strategy: free
+  vars:
+    - ansible_python_interpreter: auto_silent
+  tasks:
+    - meta: refresh_inventory
+    
+    - name: play_manage_prometheus
+      include_role:
+        name: prometheus
+        tasks_from: play_manage_prometheus.yaml
+
+- name: springald_configure_grafana
+  hosts: metal-client01.da.dlott.casa
+  gather_facts: false
+  strategy: free
+  vars:
+    - ansible_python_interpreter: auto_silent
+  tasks:
+    - meta: refresh_inventory
+    
+    - name: play_manage_grafana
+      include_role:
+        name: grafana
+        tasks_from: play_manage_grafana.yaml
