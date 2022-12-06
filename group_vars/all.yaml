@@ -14,7 +14,7 @@ metal_num_clients: 4
 
 springald_ips: {
 metal_router_vip1:  '172.22.22.1',
-metal-router01.da.dlott.casa: '172.16.16.10',
+metal-router01.da.dlott.casa: '172.16.16.1',
 metal-router02.da.dlott.casa: '172.16.16.11',
 metal-client01.da.dlott.casa: '172.16.16.21',
 metal-client02.da.dlott.casa: '172.16.16.22',
