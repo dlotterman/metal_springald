@@ -1,0 +1,32 @@
+---
+- name: client_ufw_logging
+  become: yes
+  become_method: sudo
+  ufw:
+    logging: 'off'
+
+- name: client_ufw_allow_ssh
+  become: yes
+  become_method: sudo
+  ufw: proto=tcp port=22 rule=allow
+
+- name: client_ufw_allow_grafana
+  become: yes
+  become_method: sudo
+  ufw: proto=tcp port=3000 rule=allow
+
+- name: client_ufw_allow_all_access_from_RFC1918
+  become: yes
+  become_method: sudo
+  ufw:
+    rule: allow
+    src: '{{ item }}'
+  loop:
+    - 10.0.0.0/8
+    - 172.16.0.0/12
+    - 192.168.0.0/16
+    
+- name: client_ufw_set_policy
+  become: yes
+  become_method: sudo
+  ufw: state=enabled direction=incoming policy=deny

@@ -5,4 +5,4 @@ ip addr add {{ springald_ips[inventory_hostname] }}/24 dev bond0.{{ metal_data_v
 ip link set dev bond0.{{ metal_data_vlans[0] }} up
 ip link set mtu 9000 bond0
 ip link set mtu 9000 bond0.{{ metal_data_vlans[0] }}
-ip route add 172.22.22.0/24 via {{ springald_ips["metal_router_vip1"] }}
+ip route add 172.22.22.0/24 via 172.16.16.1

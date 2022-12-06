@@ -1,0 +1,15 @@
+---
+- name: client_write_fail2ban_conf
+  become: true
+  become_method: sudo
+  template:
+    src: roles/client/templates/fail2banjail.local.j2
+    dest: /etc/fail2ban/jail.local
+    mode: '0644'
+  register: client_write_fail2ban_conf_output
+
+- name: fail2ban_restart
+  systemd:
+    name: fail2ban
+    state: restarted
+  when: client_write_fail2ban_conf_output.changed
